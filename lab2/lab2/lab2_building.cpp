@@ -470,9 +470,12 @@ struct Plateau {
 
 		for (int i = 0; i < 72; ++i) color_buffer_data[i] = 1.0f;
 
+		float textureRepeat = 20.0f;
 		//code to make the texture repeat
-		for (int i = 0; i < 24; ++i) uv_buffer_data[2*i+1] *= 5;
-
+		for (int i = 0; i < 24; ++i) {
+			uv_buffer_data[2 * i] *= textureRepeat;      // Scale U coordinate
+			uv_buffer_data[2 * i + 1] *= textureRepeat;  // Scale V coordinate
+		}
 
 		// Create a vertex buffer object to store the vertex data
 		glGenBuffers(1, &vertexBufferID);
@@ -503,7 +506,7 @@ struct Plateau {
 		// Get a handle for our "MVP" uniform
 		mvpMatrixID = glGetUniformLocation(programID, "MVP");
 
-		textureID = LoadTextureTileBox("../lab2/grass.jpg");
+		textureID = LoadTextureTileBox("../lab2/grass1.jpg");
 
 		// Set up the shader and get the texture sampler uniform
 		textureSamplerID = glGetUniformLocation(programID, "textureSampler");
@@ -544,6 +547,285 @@ struct Plateau {
 		glDrawElements(
 			GL_TRIANGLES,      // mode
 			36,    			   // number of indices
+			GL_UNSIGNED_INT,   // type
+			(void*)0           // element array buffer offset
+		);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+        //glDisableVertexAttribArray(2);
+	}
+
+	void cleanup() {
+		glDeleteBuffers(1, &vertexBufferID);
+		glDeleteBuffers(1, &colorBufferID);
+		glDeleteBuffers(1, &indexBufferID);
+		glDeleteVertexArrays(1, &vertexArrayID);
+		glDeleteProgram(programID);
+	}
+};
+
+
+
+struct Spire {
+	glm::vec3 position;
+	glm::vec3 scale;
+
+	GLfloat vertex_buffer_data[72] = {
+		// Base circle vertices (radius = 2.0, y = 0.0)
+		2.0f, 0.0f, 0.0f,    // Vertex 1
+		1.956f, 0.0f, 0.414f,  // Vertex 2
+		1.826f, 0.0f, 0.812f,  // Vertex 3
+		1.618f, 0.0f, 1.176f,  // Vertex 4
+		1.338f, 0.0f, 1.486f,  // Vertex 5
+		1.0f, 0.0f, 1.732f,    // Vertex 6
+		0.618f, 0.0f, 1.902f,  // Vertex 7
+		0.208f, 0.0f, 1.988f,  // Vertex 8
+	   -0.208f, 0.0f, 1.988f,  // Vertex 9
+	   -0.618f, 0.0f, 1.902f,  // Vertex 10
+	   -1.0f, 0.0f, 1.732f,    // Vertex 11
+	   -1.338f, 0.0f, 1.486f,  // Vertex 12
+	   -1.618f, 0.0f, 1.176f,  // Vertex 13
+	   -1.826f, 0.0f, 0.812f,  // Vertex 14
+	   -1.956f, 0.0f, 0.414f,  // Vertex 15
+	   -2.0f, 0.0f, 0.0f,      // Vertex 16
+	   -1.956f, 0.0f, -0.414f, // Vertex 17
+	   -1.826f, 0.0f, -0.812f, // Vertex 18
+	   -1.618f, 0.0f, -1.176f, // Vertex 19
+	   -1.338f, 0.0f, -1.486f, // Vertex 20
+	   -1.0f, 0.0f, -1.732f,   // Vertex 21
+	   -0.618f, 0.0f, -1.902f, // Vertex 22
+	   -0.208f, 0.0f, -1.988f, // Vertex 23
+
+	   // Apex vertex (shorter height)
+		0.0f, 5.0f, 0.0f       // Vertex 24 (apex)
+   };
+
+	GLfloat color_buffer_data[72] = {
+		// Front, red
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		// Back, yellow
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+
+		// Left, green
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// Right, cyan
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+
+		// Top, blue
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		// Bottom, magenta
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+	};
+
+	GLuint index_buffer_data[138] = {
+		// Side faces (23 triangles connecting base vertices to the apex)
+		0, 1, 23,   // Triangle between vertex 0, vertex 1, and apex
+		1, 2, 23,   // Triangle between vertex 1, vertex 2, and apex
+		2, 3, 23,
+		3, 4, 23,
+		4, 5, 23,
+		5, 6, 23,
+		6, 7, 23,
+		7, 8, 23,
+		8, 9, 23,
+		9, 10, 23,
+		10, 11, 23,
+		11, 12, 23,
+		12, 13, 23,
+		13, 14, 23,
+		14, 15, 23,
+		15, 16, 23,
+		16, 17, 23,
+		17, 18, 23,
+		18, 19, 23,
+		19, 20, 23,
+		20, 21, 23,
+		21, 22, 23,
+		22, 0, 23,   // Final triangle closing the side faces
+
+		// Base face (triangle fan, 23 triangles)
+		0, 1, 2,     // Triangle 1
+		0, 2, 3,     // Triangle 2
+		0, 3, 4,
+		0, 4, 5,
+		0, 5, 6,
+		0, 6, 7,
+		0, 7, 8,
+		0, 8, 9,
+		0, 9, 10,
+		0, 10, 11,
+		0, 11, 12,
+		0, 12, 13,
+		0, 13, 14,
+		0, 14, 15,
+		0, 15, 16,
+		0, 16, 17,
+		0, 17, 18,
+		0, 18, 19,
+		0, 19, 20,
+		0, 20, 21,
+		0, 21, 22
+	};
+
+
+
+	GLfloat uv_buffer_data[48] = {
+		// Front
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		// Back
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Left
+		 0.0f, 1.0f,
+		 1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Right
+		 0.0f, 1.0f,
+		 1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Top - we do not want texture the top
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Bottom - we do not want texture the bottom
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+        };
+
+
+	// OpenGL buffers
+	GLuint vertexArrayID;
+	GLuint vertexBufferID;
+	GLuint indexBufferID;
+	GLuint colorBufferID;
+	GLuint uvBufferID;
+	GLuint textureID;
+
+	// Shader variable IDs
+	GLuint mvpMatrixID;
+	GLuint textureSamplerID;
+	GLuint programID;
+
+	void initialize(glm::vec3 position, glm::vec3 scale) {
+		// Define scale of the building geometry
+		this->position = position;
+		this->scale = scale;
+
+		// Create a vertex array object
+		glGenVertexArrays(1, &vertexArrayID);
+		glBindVertexArray(vertexArrayID);
+
+		for (int i = 0; i < 72; ++i) color_buffer_data[i] = 1.0f;
+
+		//code to make the texture repeat
+		for (int i = 0; i < 24; ++i) uv_buffer_data[2*i+1] *= 5;
+
+
+		// Create a vertex buffer object to store the vertex data
+		glGenBuffers(1, &vertexBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+		// Create a vertex buffer object to store the color data
+		glGenBuffers(1, &colorBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(color_buffer_data), color_buffer_data, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &uvBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer_data), uv_buffer_data, GL_STATIC_DRAW);
+
+		// Create an index buffer object to store the index data that defines triangle faces
+		glGenBuffers(1, &indexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_buffer_data), index_buffer_data, GL_STATIC_DRAW);
+
+		// Create and compile our GLSL program from the shaders
+		programID = LoadShadersFromFile("../lab2/box.vert", "../lab2/box.frag");
+		if (programID == 0)
+		{
+			std::cerr << "Failed to load shaders." << std::endl;
+		}
+
+		// Get a handle for our "MVP" uniform
+		mvpMatrixID = glGetUniformLocation(programID, "MVP");
+
+		textureID = LoadTextureTileBox("../lab2/grey.png");
+
+
+		// Set up the shader and get the texture sampler uniform
+		textureSamplerID = glGetUniformLocation(programID, "textureSampler");
+	}
+
+	void render(glm::mat4 cameraMatrix) {
+
+		glDisable(GL_CULL_FACE);
+
+		glUseProgram(programID);
+
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+
+		// Model transform
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, position);
+        modelMatrix = glm::scale(modelMatrix, scale);
+
+		// Set model-view-projection matrix
+		glm::mat4 mvp = cameraMatrix * modelMatrix;
+		glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &mvp[0][0]);
+
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glUniform1i(textureSamplerID, 0);
+
+		// Draw the box
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			138,    			   // number of indices
 			GL_UNSIGNED_INT,   // type
 			(void*)0           // element array buffer offset
 		);
@@ -611,6 +893,9 @@ int main(void)
 	Plateau plateau;
 	plateau.initialize(glm::vec3(0, 0, 0), glm::vec3(1000, 10, 1000));
 
+	//SPIRE SET UP
+	Spire spire;
+	spire.initialize(glm::vec3(0, 10, 0), glm::vec3(10, 100, 10));
 
 	//BUILDING SET UP
 	//___________________________________________________________________________________________________________________
@@ -655,9 +940,11 @@ int main(void)
 
 		plateau.render(vp);
 
+		spire.render(vp);
+
 		// Render all buildings
 		for (Building &b : buildings) {
-			b.render(vp);
+			//b.render(vp);
 		}
 
 		// Swap buffers
@@ -673,6 +960,8 @@ int main(void)
 		b.cleanup();
 	}
 	plateau.cleanup();
+
+	spire.cleanup();
 	//-----------------------------------------------------------------------------------------------------
 
 	// Close OpenGL window and terminate GLFW
@@ -695,29 +984,53 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 	if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		// Move left by decreasing the x-coordinate
-		eye_center.x -= 0.5f;
+		// Turn left by decreasing the azimuth angle
+		viewAzimuth -= 0.05f; // Adjust step size for smoother or faster rotation
+
+		// Recompute the camera position
+		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
 	}
 
 	if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		// Move right by increasing the x-coordinate
-		eye_center.x += 0.5f;
+		// Turn right by increasing the azimuth angle
+		viewAzimuth += 0.05f; // Adjust step size for smoother or faster rotation
+
+		// Recompute the camera position
+		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
 	}
 
-	if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
 
-		// Zoom in by reducing the distance from the origin
-		viewDistance -= 1.0f;
+
+
+
+	if (key == GLFW_KEY_P && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	{
+		// Zoom in by reducing the distance from the object
+		viewDistance -= 1.0f; // Decrease the distance
 		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
+
+		// Recompute the camera position
+		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+		eye_center.y = viewDistance * cos(viewPolar);
+		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
 	}
 
-	if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
+	if (key == GLFW_KEY_L && (action == GLFW_REPEAT || action == GLFW_PRESS))
 	{
-		// Zoom out by increasing the distance from the origin
-		viewDistance += 1.0f;
+		// Zoom in by reducing the distance from the object
+		viewDistance += 1.0f; // Decrease the distance
+		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
+
+		// Recompute the camera position
+		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+		eye_center.y = viewDistance * cos(viewPolar);
+		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
 	}
+
+
 
 	// Update the camera's position based on the updated viewDistance
 	eye_center.x = viewDistance * cos(viewAzimuth);
@@ -727,3 +1040,4 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 }
+
