@@ -9,7 +9,7 @@ layout(location = 2) in vec2 vertexUV;
 out vec3 color;
 out vec2 uv;
 
-// TODO: To add UV to this vertex shader 
+// TODO: To add UV to this vertex shader
 
 // Matrix for vertex transformation
 uniform mat4 MVP;

@@ -28,14 +28,14 @@ static float viewPolar = 0.f;
 static float viewDistance = 300.0f;
 
 const char* textureFiles[] = {
-	"../lab2/textures/fasade_sky.png",
-	"../lab2/textures/fasade_sky2.png",
 	"../lab2/textures/sky.png",
-	"../lab2/textures/fasade_sky3.png",
-	"../lab2/textures/fasade_sky3.png",
+	"../lab2/textures/fasade_sky2.png",
+	"../lab2/textures/fasade_sky1.png",
+	"../lab2/textures/fasade_sky1.png",
 	"../lab2/textures/fasade_sky4.png",
 
 };
+
 
 static GLuint LoadTextureTileBox(const char *texture_file_path) {
 
@@ -143,23 +143,23 @@ struct Building {
 	};
 
 	GLuint index_buffer_data[36] = {		// 12 triangle faces of a box
-		0, 1, 2, 	
-		0, 2, 3, 
-		
-		4, 5, 6, 
-		4, 6, 7, 
+		0, 1, 2,
+		0, 2, 3,
 
-		8, 9, 10, 
-		8, 10, 11, 
+		4, 5, 6,
+		4, 6, 7,
 
-		12, 13, 14, 
-		12, 14, 15, 
+		8, 9, 10,
+		8, 10, 11,
 
-		16, 17, 18, 
-		16, 18, 19, 
+		12, 13, 14,
+		12, 14, 15,
 
-		20, 21, 22, 
-		20, 22, 23, 
+		16, 17, 18,
+		16, 18, 19,
+
+		20, 21, 22,
+		20, 22, 23,
 	};
 	GLfloat uv_buffer_data[48] = {
 		// Front
@@ -193,7 +193,6 @@ struct Building {
 		1.0f, 0.0f,
 		0.0f, 0.0f,
 	};
-
 
 
 	// OpenGL buffers
@@ -745,9 +744,9 @@ struct Bars {
 		mvpMatrixID = glGetUniformLocation(programID, "MVP");
 
 
-		for (int i = 0; i < 6; ++i) {
-			textureIDs[i] = LoadTextureTileBox(textureFile);
-		}
+		char* selectedTexture = "../lab2/textures/bar1.png";
+		textureID = LoadTextureTileBox(selectedTexture);
+
 
 		// Set up the shader and get the texture sampler uniform
 		textureSamplerID = glGetUniformLocation(programID, "textureSampler");
@@ -778,15 +777,18 @@ struct Bars {
 		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		// Render each face with its own texture
-		for (int i = 0; i < 6; ++i) {
-			glActiveTexture(GL_TEXTURE0 + i); // Use a separate texture unit for each face
-			glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-			glUniform1i(textureSamplerID, i); // Pass the texture unit to the shader
 
-			// Draw two triangles (6 indices) per face
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(i * 6 * sizeof(GLuint)));
-		}
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glUniform1i(textureSamplerID, 0);
+
+		// Draw the box
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			36,    			   // number of indices
+			GL_UNSIGNED_INT,   // type
+			(void*)0           // element array buffer offset
+		);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
@@ -1550,6 +1552,264 @@ struct Plateau {
 };
 
 
+struct Street {
+	glm::vec3 position;
+	glm::vec3 scale;
+
+	GLfloat vertex_buffer_data[72] = {
+		// Front face
+		-10.0f, -10.0f, 10.0f,
+		10.0f, -10.0f, 10.0f,
+		10.0f, 10.0f, 10.0f,
+		-10.0f, 10.0f, 10.0f,
+
+		// Back face
+		10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, 10.0f, -10.0f,
+		10.0f, 10.0f, -10.0f,
+
+		// Left face
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f, 10.0f,
+		-10.0f, 10.0f, 10.0f,
+		-10.0f, 10.0f, -10.00f,
+
+		// Right face
+		10.0f, -10.0f, 10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, 10.0f, -10.0f,
+		10.0f, 10.0f, 10.0f,
+
+		// Top face
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+
+		// Bottom face
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+	};
+
+	GLfloat color_buffer_data[72] = {
+		// Front, red
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		// Back, yellow
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+
+		// Left, green
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// Right, cyan
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 1.0f,
+
+		// Top, blue
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		// Bottom, magenta
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,
+	};
+
+	GLuint index_buffer_data[36] = {		// 12 triangle faces of a box
+		0, 1, 2,
+		0, 2, 3,
+
+		4, 5, 6,
+		4, 6, 7,
+
+		8, 9, 10,
+		8, 10, 11,
+
+		12, 13, 14,
+		12, 14, 15,
+
+		16, 17, 18,
+		16, 18, 19,
+
+		20, 21, 22,
+		20, 22, 23,
+	};
+
+	GLfloat uv_buffer_data[48] = {
+		// Front
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		// Back
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Left
+		 0.0f, 1.0f,
+		 1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Right
+		 0.0f, 1.0f,
+		 1.0f, 1.0f,
+		 1.0f, 0.0f,
+		 0.0f, 0.0f,
+		 // Top - we do not want texture the top
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		 // Bottom - we do not want texture the bottom
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+		 0.0f, 0.0f,
+        };
+
+
+	// OpenGL buffers
+	GLuint vertexArrayID;
+	GLuint vertexBufferID;
+	GLuint indexBufferID;
+	GLuint colorBufferID;
+	GLuint uvBufferID;
+	GLuint textureID;
+
+	// Shader variable IDs
+	GLuint mvpMatrixID;
+	GLuint textureSamplerID;
+	GLuint programID;
+
+	void initialize(glm::vec3 position, glm::vec3 scale) {
+		// Define scale of the building geometry
+		this->position = position;
+		this->scale = scale;
+
+		// Create a vertex array object
+		glGenVertexArrays(1, &vertexArrayID);
+		glBindVertexArray(vertexArrayID);
+
+		for (int i = 0; i < 72; ++i) color_buffer_data[i] = 1.0f;
+
+		//code to make the texture repeat
+		for (int i = 0; i < 24; ++i) uv_buffer_data[2*i+1] *= 5;
+
+
+		float textureRepeat = 2.0f;
+		//code to make the texture repeat
+		for (int i = 0; i < 24; ++i) {
+			uv_buffer_data[2 * i] *= textureRepeat;      // Scale U coordinate
+			uv_buffer_data[2 * i + 1] *= textureRepeat;  // Scale V coordinate
+		}
+
+		// Create a vertex buffer object to store the vertex data
+		glGenBuffers(1, &vertexBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+
+		// Create a vertex buffer object to store the color data
+		glGenBuffers(1, &colorBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(color_buffer_data), color_buffer_data, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &uvBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(uv_buffer_data), uv_buffer_data, GL_STATIC_DRAW);
+
+		// Create an index buffer object to store the index data that defines triangle faces
+		glGenBuffers(1, &indexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_buffer_data), index_buffer_data, GL_STATIC_DRAW);
+
+		// Create and compile our GLSL program from the shaders
+		programID = LoadShadersFromFile("../lab2/box.vert", "../lab2/box.frag");
+		if (programID == 0)
+		{
+			std::cerr << "Failed to load shaders." << std::endl;
+		}
+
+		// Get a handle for our "MVP" uniform
+		mvpMatrixID = glGetUniformLocation(programID, "MVP");
+
+		textureID = LoadTextureTileBox("../lab2/textures/street2.png");
+
+		// Set up the shader and get the texture sampler uniform
+		textureSamplerID = glGetUniformLocation(programID, "textureSampler");
+	}
+
+	void render(glm::mat4 cameraMatrix) {
+		glUseProgram(programID);
+
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+
+		// Model transform
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, position);
+        modelMatrix = glm::scale(modelMatrix, scale);
+
+		// Set model-view-projection matrix
+		glm::mat4 mvp = cameraMatrix * modelMatrix;
+		glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &mvp[0][0]);
+
+		// TODO: Enable UV buffer and texture sampler
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glUniform1i(textureSamplerID, 0);
+
+		// Draw the box
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			36,    			   // number of indices
+			GL_UNSIGNED_INT,   // type
+			(void*)0           // element array buffer offset
+		);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+        //glDisableVertexAttribArray(2);
+	}
+
+	void cleanup() {
+		glDeleteBuffers(1, &vertexBufferID);
+		glDeleteBuffers(1, &colorBufferID);
+		glDeleteBuffers(1, &indexBufferID);
+		glDeleteVertexArrays(1, &vertexArrayID);
+		glDeleteProgram(programID);
+	}
+};
+
+
 
 struct Spire {
 	glm::vec3 position;
@@ -1858,6 +2118,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 
+glm::vec3 lightPosition = glm::vec3(300.0f, 500.0f, -200.0f); // Position of the light
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);           // White light
+glm::vec3 viewPosition; // This will be set to `eye_center` dynamically
 
 
 
@@ -1869,6 +2132,9 @@ int main(void)
 		std::cerr << "Failed to initialize GLFW." << std::endl;
 		return -1;
 	}
+
+	viewPosition = eye_center; // Update view position dynamically
+
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -1920,43 +2186,47 @@ int main(void)
 	//___________________________________________________________________________________________________________________
 
 	Building building1;
-	building1.initialize(glm::vec3(200, 10, 20), glm::vec3(50, 300, 70),3);
+	building1.initialize(glm::vec3(200, 10, 20), glm::vec3(50, 300, 70),2);
 	Building building2;
 	building2.initialize(glm::vec3(200, 10, 200), glm::vec3(50, 300, 70),1);
 	Building building3;
-	building3.initialize(glm::vec3(200, 10, 400), glm::vec3(50, 300, 70),3);
+	building3.initialize(glm::vec3(200, 10, 400), glm::vec3(50, 300, 70),2);
 	Building building4;
-	building4.initialize(glm::vec3(200, 10, -180), glm::vec3(50, 300, 70),0);
+	building4.initialize(glm::vec3(200, 10, -180), glm::vec3(50, 300, 70),1);
 	Building building5;
-	building5.initialize(glm::vec3(200, 10, -380), glm::vec3(50, 500, 70),0);
+	building5.initialize(glm::vec3(200, 10, -380), glm::vec3(50, 500, 70),1);
 	Building building6;
-	building6.initialize(glm::vec3(-200, 400, 20), glm::vec3(50, 300, 70),0);
+	building6.initialize(glm::vec3(-200, 430, -100), glm::vec3(90.0f, 300.0f, 90.0f),1);
 	Bars bar1;
-	bar1.initialize(glm::vec3(-200, 10, 20), glm::vec3(50, 100, 70),"../lab2/textures/bar1.png");
+	bar1.initialize(glm::vec3(-200, 10, -100), glm::vec3(90, 120, 90),"../lab2/textures/bar1.png");
 
 	Museum museum;
-	museum.initialize(glm::vec3(-250, 10, 200), glm::vec3(80, 195, 100),"../lab2/textures/gpo2.png");
+	museum.initialize(glm::vec3(-270, 00, 260), glm::vec3(80, 210, 190),"../lab2/textures/gpo3.png");
 
 	Pillar pillar1;
-	pillar1.initialize(glm::vec3(-120, 10, 140), glm::vec3(12, 35, 12));
+	pillar1.initialize(glm::vec3(-120, 10, 240), glm::vec3(10, 40, 10));
 
 	Pillar pillar2;
-	pillar2.initialize(glm::vec3(-120, 10, 190), glm::vec3(12, 35, 12));
+	pillar2.initialize(glm::vec3(-120, 10, 280), glm::vec3(10, 40, 10));
 
 	Pillar pillar3;
-	pillar3.initialize(glm::vec3(-120, 10, 240), glm::vec3(12, 35, 12));
+	pillar3.initialize(glm::vec3(-120, 10, 310), glm::vec3(10, 40, 10));
 
 	Pillar pillar4;
-	pillar4.initialize(glm::vec3(-120, 10, 290), glm::vec3(12, 35, 12));
+	pillar4.initialize(glm::vec3(-120, 10, 350), glm::vec3(10, 40, 10));
 
 	Building building8;
-	building8.initialize(glm::vec3(-200, 10, 500), glm::vec3(50, 300, 70),5);
+	building8.initialize(glm::vec3(-200, 10, 500), glm::vec3(50, 300, 70),2);
 	Building building9;
-	building9.initialize(glm::vec3(-200, 10, -180), glm::vec3(50, 300, 70),0);
+	building9.initialize(glm::vec3(-200, 100, -180), glm::vec3(50.0f, 30.0f, 50.0f),2);
 
 
 	Skyboxik skybox;
-	skybox.initialize(glm::vec3(0, 0, -0), glm::vec3(500, 500, 500),2);
+	skybox.initialize(glm::vec3(0, 0, -0), glm::vec3(500, 500, 500),0);
+
+	Street street1;
+	street1.initialize(glm::vec3(0, 2, 20), glm::vec3(100, 10, 700));
+
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Camera setup
@@ -1978,6 +2248,7 @@ int main(void)
 		viewMatrix = glm::lookAt(eye_center, lookat, up);
 		glm::mat4 vp = projectionMatrix * viewMatrix;
 
+
 		plateau.render(vp);
 		spire.render(vp);
 		building1.render(vp);
@@ -1988,8 +2259,8 @@ int main(void)
 		building5.render(vp);
 		building6.render(vp);
 		museum.render(vp);
-		building8.render(vp);
-		building9.render(vp);
+		//building8.render(vp);
+		//building9.render(vp);
 		skybox.render(vp);
 		pillar1.render(vp);
 		pillar2.render(vp);
@@ -1997,6 +2268,8 @@ int main(void)
 		pillar4.render(vp);
 
 		bar1.render(vp);
+
+		street1.render(vp);
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -2026,6 +2299,8 @@ int main(void)
 
 	plateau.cleanup();
 	spire.cleanup();
+
+	street1.cleanup();
 	//-----------------------------------------------------------------------------------------------------
 
 	// Close OpenGL window and terminate GLFW
