@@ -20,6 +20,7 @@ include_directories(
 add_executable(lab2_building
 	lab2/lab2_building.cpp
 	lab2/render/shader.cpp
+
 )
 
 add_executable(lab2_skybox

@@ -22,6 +22,15 @@ static glm::vec3 eye_center;
 static glm::vec3 lookat(0, 0, 0);
 static glm::vec3 up(0, 1, 0);
 
+glm::vec3 cameraPosition(0.0f, 111.0f, 50.0f); // Initial camera position
+glm::vec3 cameraFront(0.0f, 0.0f, -1.0f);  // Direction the camera is facing
+glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);      // Up vector (world up)
+float yaw = -90.0f; // Horizontal rotation (initialized to point along -Z)
+float pitch = 0.0f; // Vertical rotation
+float speed = 5.0f; // Movement speed
+float sensitivity = 0.1f; // Mouse sensitivity
+
+
 // View control 
 static float viewAzimuth = 0.f;
 static float viewPolar = 0.f;
@@ -2089,9 +2098,8 @@ struct Spire {
 };
 
 
-
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	static float lastX = 400, lastY = 300; // Initialize with center of screen
+	static float lastX = 400, lastY = 300;
 	static bool firstMouse = true;
 
 	if (firstMouse) {
@@ -2101,20 +2109,26 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	}
 
 	float xOffset = xpos - lastX;
-	float yOffset = lastY - ypos; // Reversed: y-coordinates range bottom to top
+	float yOffset = lastY - ypos; // Reversed since y-coordinates range bottom to top
 	lastX = xpos;
 	lastY = ypos;
 
-	float sensitivity = 0.1f; // Adjust sensitivity
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
-	viewAzimuth += glm::radians(xOffset);
-	viewPolar += glm::radians(yOffset);
+	yaw += xOffset;
+	pitch += yOffset;
 
-	// Constrain polar angle to prevent flipping
-	if (viewPolar > glm::radians(89.0f)) viewPolar = glm::radians(89.0f);
-	if (viewPolar < glm::radians(-89.0f)) viewPolar = glm::radians(-89.0f);
+	// Constrain pitch to avoid flipping
+	if (pitch > 89.0f) pitch = 89.0f;
+	if (pitch < -89.0f) pitch = -89.0f;
+
+	// Update cameraFront vector
+	cameraFront = glm::normalize(glm::vec3(
+		cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+		sin(glm::radians(pitch)),
+		sin(glm::radians(yaw)) * cos(glm::radians(pitch))
+	));
 }
 
 
@@ -2245,8 +2259,10 @@ int main(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		viewMatrix = glm::lookAt(eye_center, lookat, up);
+		//viewMatrix = glm::lookAt(eye_center, lookat, up);
 		glm::mat4 vp = projectionMatrix * viewMatrix;
+
+		viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
 
 		plateau.render(vp);
@@ -2309,101 +2325,124 @@ int main(void)
 	return 0;
 }
 
-// Is called whenever a key is pressed/released via GLFW
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-	if (key == GLFW_KEY_R && action == GLFW_PRESS)
-	{
-		viewAzimuth = 0.f;
-		viewPolar = 0.f;
-		eye_center.y = viewDistance * cos(viewPolar);
-		eye_center.x = viewDistance * cos(viewAzimuth);
-		eye_center.z = viewDistance * sin(viewAzimuth);
-		std::cout << "Reset." << std::endl;
-	}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	float deltaTime = 0.16f; // Assuming ~60 FPS
+	float velocity = speed * deltaTime;
 
-	if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		// Turn left by decreasing the azimuth angle
-		viewAzimuth -= 0.05f; // Adjust step size for smoother or faster rotation
+	glm::vec3 cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 
-		// Recompute the camera position
-		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
-		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
-	}
-
-	if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		// Turn right by increasing the azimuth angle
-		viewAzimuth += 0.05f; // Adjust step size for smoother or faster rotation
-
-		// Recompute the camera position
-		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
-		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
-	}
-
-
-	if (key == GLFW_KEY_P && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		// Zoom in by reducing the distance from the object
-		viewDistance -= 1.0f; // Decrease the distance
-		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
-
-		// Recompute the camera position
-		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
-		eye_center.y = viewDistance * cos(viewPolar);
-		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
-	}
-
-	if (key == GLFW_KEY_L && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		// Zoom in by reducing the distance from the object
-		viewDistance += 1.0f; // Decrease the distance
-		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
-
-		// Recompute the camera position
-		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
-		eye_center.y = viewDistance * cos(viewPolar);
-		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
-	}
-
-
-	if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		float speed = 1.0f; // Adjust speed as needed
-
-		// Compute forward direction based on azimuth and polar angles
-		glm::vec3 forwardDirection = glm::vec3(
-			cos(viewPolar) * sin(viewAzimuth), // x
-			sin(viewPolar),                    // y
-			cos(viewPolar) * cos(viewAzimuth)  // z
-		);
-
-		// Move the lookat and eye_center forward
-		lookat += forwardDirection * speed;
-		eye_center += forwardDirection * speed;
-	}
-
-	if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		float speed = 1.0f; // Adjust speed as needed
-
-		// Compute backward direction
-		glm::vec3 backwardDirection = glm::vec3(
-			-cos(viewPolar) * sin(viewAzimuth), // x
-			-sin(viewPolar),                    // y
-			-cos(viewPolar) * cos(viewAzimuth)  // z
-		);
-
-		// Move the lookat and eye_center backward
-		lookat += backwardDirection * speed;
-		eye_center += backwardDirection * speed;
-	}
-
-
-	// Update the camera's position based on the updated viewDistance
-	eye_center.x = viewDistance * cos(viewAzimuth);
-	eye_center.z = viewDistance * sin(viewAzimuth);
-
+	if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition += cameraFront * velocity; // Move forward
+	if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition -= cameraFront * velocity; // Move backward
+	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition -= cameraRight * velocity; // Move left
+	if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition += cameraRight * velocity; // Move right
+	if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition += cameraUp * velocity; // Move up
+	if (key == GLFW_KEY_LEFT_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cameraPosition -= cameraUp * velocity; // Move down
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-
 }
+
+
+// Is called whenever a key is pressed/released via GLFW
+// void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+// 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+// 	{
+// 		viewAzimuth = 0.f;
+// 		viewPolar = 0.f;
+// 		eye_center.y = viewDistance * cos(viewPolar);
+// 		eye_center.x = viewDistance * cos(viewAzimuth);
+// 		eye_center.z = viewDistance * sin(viewAzimuth);
+// 		std::cout << "Reset." << std::endl;
+// 	}
+//
+// 	if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+// 	{
+// 		// Turn left by decreasing the azimuth angle
+// 		viewAzimuth -= 0.05f; // Adjust step size for smoother or faster rotation
+//
+// 		// Recompute the camera position
+// 		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+// 		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
+// 	}
+//
+// 	if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
+// 	{
+// 		// Turn right by increasing the azimuth angle
+// 		viewAzimuth += 0.05f; // Adjust step size for smoother or faster rotation
+//
+// 		// Recompute the camera position
+// 		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+// 		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
+// 	}
+//
+//
+// 	if (key == GLFW_KEY_P && (action == GLFW_REPEAT || action == GLFW_PRESS))
+// 	{
+// 		// Zoom in by reducing the distance from the object
+// 		viewDistance -= 1.0f; // Decrease the distance
+// 		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
+//
+// 		// Recompute the camera position
+// 		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+// 		eye_center.y = viewDistance * cos(viewPolar);
+// 		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
+// 	}
+//
+// 	if (key == GLFW_KEY_L && (action == GLFW_REPEAT || action == GLFW_PRESS))
+// 	{
+// 		// Zoom in by reducing the distance from the object
+// 		viewDistance += 1.0f; // Decrease the distance
+// 		if (viewDistance < 1.0f) viewDistance = 1.0f; // Prevent going too close
+//
+// 		// Recompute the camera position
+// 		eye_center.x = viewDistance * cos(viewAzimuth) * sin(viewPolar);
+// 		eye_center.y = viewDistance * cos(viewPolar);
+// 		eye_center.z = viewDistance * sin(viewAzimuth) * sin(viewPolar);
+// 	}
+//
+//
+// 	if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+// 		float speed = 1.0f; // Adjust speed as needed
+//
+// 		// Compute forward direction based on azimuth and polar angles
+// 		glm::vec3 forwardDirection = glm::vec3(
+// 			cos(viewPolar) * sin(viewAzimuth), // x
+// 			sin(viewPolar),                    // y
+// 			cos(viewPolar) * cos(viewAzimuth)  // z
+// 		);
+//
+// 		// Move the lookat and eye_center forward
+// 		lookat += forwardDirection * speed;
+// 		eye_center += forwardDirection * speed;
+// 	}
+//
+// 	if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+// 		float speed = 1.0f; // Adjust speed as needed
+//
+// 		// Compute backward direction
+// 		glm::vec3 backwardDirection = glm::vec3(
+// 			-cos(viewPolar) * sin(viewAzimuth), // x
+// 			-sin(viewPolar),                    // y
+// 			-cos(viewPolar) * cos(viewAzimuth)  // z
+// 		);
+//
+// 		// Move the lookat and eye_center backward
+// 		lookat += backwardDirection * speed;
+// 		eye_center += backwardDirection * speed;
+// 	}
+//
+//
+// 	// Update the camera's position based on the updated viewDistance
+// 	eye_center.x = viewDistance * cos(viewAzimuth);
+// 	eye_center.z = viewDistance * sin(viewAzimuth);
+//
+// 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+// 		glfwSetWindowShouldClose(window, GL_TRUE);
+//
+// }
 
