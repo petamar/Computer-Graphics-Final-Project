@@ -129,19 +129,6 @@ lab2_building/fast:
 .PHONY : lab2_building/fast
 
 #=============================================================================
-# Target rules for targets named lab2_skybox
-
-# Build rule for target.
-lab2_skybox: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 lab2_skybox
-.PHONY : lab2_skybox
-
-# fast build rule for target.
-lab2_skybox/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/build
-.PHONY : lab2_skybox/fast
-
-#=============================================================================
 # Target rules for targets named glad
 
 # Build rule for target.
@@ -191,29 +178,29 @@ lab2/lab2_building.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.s
 .PHONY : lab2/lab2_building.cpp.s
 
-lab2/lab2_skybox.obj: lab2/lab2_skybox.cpp.obj
-.PHONY : lab2/lab2_skybox.obj
+lab2/lab4_skeleton.obj: lab2/lab4_skeleton.cpp.obj
+.PHONY : lab2/lab4_skeleton.obj
 
 # target to build an object file
-lab2/lab2_skybox.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/lab2_skybox.cpp.obj
-.PHONY : lab2/lab2_skybox.cpp.obj
+lab2/lab4_skeleton.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.obj
+.PHONY : lab2/lab4_skeleton.cpp.obj
 
-lab2/lab2_skybox.i: lab2/lab2_skybox.cpp.i
-.PHONY : lab2/lab2_skybox.i
+lab2/lab4_skeleton.i: lab2/lab4_skeleton.cpp.i
+.PHONY : lab2/lab4_skeleton.i
 
 # target to preprocess a source file
-lab2/lab2_skybox.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/lab2_skybox.cpp.i
-.PHONY : lab2/lab2_skybox.cpp.i
+lab2/lab4_skeleton.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.i
+.PHONY : lab2/lab4_skeleton.cpp.i
 
-lab2/lab2_skybox.s: lab2/lab2_skybox.cpp.s
-.PHONY : lab2/lab2_skybox.s
+lab2/lab4_skeleton.s: lab2/lab4_skeleton.cpp.s
+.PHONY : lab2/lab4_skeleton.s
 
 # target to generate assembly for a file
-lab2/lab2_skybox.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/lab2_skybox.cpp.s
-.PHONY : lab2/lab2_skybox.cpp.s
+lab2/lab4_skeleton.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.s
+.PHONY : lab2/lab4_skeleton.cpp.s
 
 lab2/render/shader.obj: lab2/render/shader.cpp.obj
 .PHONY : lab2/render/shader.obj
@@ -221,7 +208,6 @@ lab2/render/shader.obj: lab2/render/shader.cpp.obj
 # target to build an object file
 lab2/render/shader.cpp.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.obj
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/render/shader.cpp.obj
 .PHONY : lab2/render/shader.cpp.obj
 
 lab2/render/shader.i: lab2/render/shader.cpp.i
@@ -230,7 +216,6 @@ lab2/render/shader.i: lab2/render/shader.cpp.i
 # target to preprocess a source file
 lab2/render/shader.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/render/shader.cpp.i
 .PHONY : lab2/render/shader.cpp.i
 
 lab2/render/shader.s: lab2/render/shader.cpp.s
@@ -239,7 +224,6 @@ lab2/render/shader.s: lab2/render/shader.cpp.s
 # target to generate assembly for a file
 lab2/render/shader.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/lab2/render/shader.cpp.s
 .PHONY : lab2/render/shader.cpp.s
 
 # Help Target
@@ -253,13 +237,12 @@ help:
 	@echo ... glad
 	@echo ... glfw
 	@echo ... lab2_building
-	@echo ... lab2_skybox
 	@echo ... lab2/lab2_building.obj
 	@echo ... lab2/lab2_building.i
 	@echo ... lab2/lab2_building.s
-	@echo ... lab2/lab2_skybox.obj
-	@echo ... lab2/lab2_skybox.i
-	@echo ... lab2/lab2_skybox.s
+	@echo ... lab2/lab4_skeleton.obj
+	@echo ... lab2/lab4_skeleton.i
+	@echo ... lab2/lab4_skeleton.s
 	@echo ... lab2/render/shader.obj
 	@echo ... lab2/render/shader.i
 	@echo ... lab2/render/shader.s

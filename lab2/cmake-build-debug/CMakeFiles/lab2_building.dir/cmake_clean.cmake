@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.obj"
   "CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.obj.d"
+  "CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.obj"
+  "CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.obj.d"
   "CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.obj"
   "CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.obj.d"
   "lab2_building.exe"

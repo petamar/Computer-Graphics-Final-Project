@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(lab2)
 
 find_package(OpenGL REQUIRED)
@@ -20,21 +20,11 @@ include_directories(
 add_executable(lab2_building
 	lab2/lab2_building.cpp
 	lab2/render/shader.cpp
-
+		lab2/lab4_skeleton.cpp
 )
 
-add_executable(lab2_skybox
-		lab2/lab2_skybox.cpp
-		lab2/render/shader.cpp
-)
 target_link_libraries(lab2_building
 	${OPENGL_LIBRARY}
 	glfw
 	glad
-)
-
-target_link_libraries(lab2_skybox
-		${OPENGL_LIBRARY}
-		glfw
-		glad
 )

@@ -80,7 +80,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/lab2_building.dir/DependInfo.cmake"
-  "CMakeFiles/lab2_skybox.dir/DependInfo.cmake"
   "external/glad-3.3/CMakeFiles/glad.dir/DependInfo.cmake"
   "external/glfw-3.1.2/src/CMakeFiles/glfw.dir/DependInfo.cmake"
   )

@@ -1,5 +1,4 @@
 C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/cmake-build-debug/CMakeFiles/lab2_building.dir
-C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/cmake-build-debug/CMakeFiles/lab2_skybox.dir
 C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/cmake-build-debug/CMakeFiles/edit_cache.dir
 C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
 C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/cmake-build-debug/external/CMakeFiles/edit_cache.dir

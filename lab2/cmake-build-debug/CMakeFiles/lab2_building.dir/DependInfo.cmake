@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/lab2/lab2_building.cpp" "CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.obj" "gcc" "CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.obj.d"
+  "C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/lab2/lab4_skeleton.cpp" "CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.obj" "gcc" "CMakeFiles/lab2_building.dir/lab2/lab4_skeleton.cpp.obj.d"
   "C:/Users/petam/Desktop/trinity4/Computer Graphics/The Final Project/lab2/lab2/render/shader.cpp" "CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.obj" "gcc" "CMakeFiles/lab2_building.dir/lab2/render/shader.cpp.obj.d"
   )
 

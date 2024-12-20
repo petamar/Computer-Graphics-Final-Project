@@ -63,7 +63,6 @@ CMAKE_BINARY_DIR = "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final 
 
 # The main recursive "all" target.
 all: CMakeFiles/lab2_building.dir/all
-all: CMakeFiles/lab2_skybox.dir/all
 all: external/all
 .PHONY : all
 
@@ -73,7 +72,6 @@ preinstall: external/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/lab2_building.dir/clean
-clean: CMakeFiles/lab2_skybox.dir/clean
 clean: external/clean
 .PHONY : clean
 
@@ -148,12 +146,12 @@ CMakeFiles/lab2_building.dir/all: external/glad-3.3/CMakeFiles/glad.dir/all
 CMakeFiles/lab2_building.dir/all: external/glfw-3.1.2/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" --progress-num=16,17,18 "Built target lab2_building"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" --progress-num=16,17,18,19 "Built target lab2_building"
 .PHONY : CMakeFiles/lab2_building.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/lab2_building.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" 18
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" 19
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/lab2_building.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" 0
 .PHONY : CMakeFiles/lab2_building.dir/rule
@@ -166,33 +164,6 @@ lab2_building: CMakeFiles/lab2_building.dir/rule
 CMakeFiles/lab2_building.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_building.dir\build.make CMakeFiles/lab2_building.dir/clean
 .PHONY : CMakeFiles/lab2_building.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/lab2_skybox.dir
-
-# All Build rule for target.
-CMakeFiles/lab2_skybox.dir/all: external/glad-3.3/CMakeFiles/glad.dir/all
-CMakeFiles/lab2_skybox.dir/all: external/glfw-3.1.2/src/CMakeFiles/glfw.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" --progress-num=19,20,21 "Built target lab2_skybox"
-.PHONY : CMakeFiles/lab2_skybox.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/lab2_skybox.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" 18
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/lab2_skybox.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2\cmake-build-debug\CMakeFiles" 0
-.PHONY : CMakeFiles/lab2_skybox.dir/rule
-
-# Convenience name for target.
-lab2_skybox: CMakeFiles/lab2_skybox.dir/rule
-.PHONY : lab2_skybox
-
-# clean rule for target.
-CMakeFiles/lab2_skybox.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\lab2_skybox.dir\build.make CMakeFiles/lab2_skybox.dir/clean
-.PHONY : CMakeFiles/lab2_skybox.dir/clean
 
 #=============================================================================
 # Target rules for target external/glad-3.3/CMakeFiles/glad.dir
