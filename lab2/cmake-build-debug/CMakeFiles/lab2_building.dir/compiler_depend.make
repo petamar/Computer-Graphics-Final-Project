@@ -413,6 +413,7 @@ CMakeFiles/lab2_building.dir/lab2/lab2_building.cpp.obj: C:/Users/petam/Desktop/
   C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/glad-3.3/include/KHR/khrplatform.h \
   C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/glad-3.3/include/glad/gl.h \
   C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/tinygltf-2.9.3/stb_image.h \
+  C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/tinygltf-2.9.3/stb_image_write.h \
   C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/tinygltf-2.9.3/tiny_gltf.h \
   C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/lab2/render/shader.h
 
@@ -1160,9 +1161,9 @@ C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/ammintrin.h:
 
-C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/tinygltf-2.9.3/stb_image_write.h:
-
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/amxint8intrin.h:
+
+C:/Users/petam/Desktop/trinity4/Computer\ Graphics/The\ Final\ Project/lab2/external/tinygltf-2.9.3/stb_image_write.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/minwindef.h:
 
@@ -2096,8 +2097,6 @@ C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/valarray_after.h:
 
-C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/sys/stat.h:
-
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/codecvt:
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/concurrence.h:
@@ -2173,6 +2172,8 @@ C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/specstrings.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/synchapi.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/sys/stat.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2024.2.2/bin/mingw/x86_64-w64-mingw32/include/sysinfoapi.h:
 

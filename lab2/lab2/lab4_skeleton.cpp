@@ -35,19 +35,19 @@ static glm::vec3 lookat(0.0f, 0.0f, 0.0f);
 static glm::vec3 up(0.0f, 1.0f, 0.0f);
 static float FoV = 45.0f;
 static float zNear = 100.0f;
-static float zFar = 1500.0f; 
+static float zFar = 1500.0f;
 
-// Lighting  
+// Lighting
 static glm::vec3 lightIntensity(5e6f, 5e6f, 5e6f);
 static glm::vec3 lightPosition(-275.0f, 500.0f, 800.0f);
 
-// Animation 
+// Animation
 static bool playAnimation = true;
 static float playbackSpeed = 2.0f;
 
 // Helper class to render skeleton based on given animation data
 struct Skeleton {
-	
+
 	const std::string vertexShader = R"(
 	#version 330 core
 
@@ -153,7 +153,7 @@ struct Skeleton {
 	}
 
 	void renderSphere(const glm::vec3& position, float radius, const glm::mat4& viewProjMatrix) {
-		glm::mat4 modelMatrix = glm::mat4(1.0f); 
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, position);
         modelMatrix = glm::scale(modelMatrix, glm::vec3(radius));
 
@@ -191,10 +191,10 @@ struct Skeleton {
 		glDeleteVertexArrays(1, &VAO);
 	}
 
-	void renderSkeleton(const tinygltf::Model& model, 
-        const tinygltf::Skin &skin, 
+	void renderSkeleton(const tinygltf::Model& model,
+        const tinygltf::Skin &skin,
         const std::vector<glm::mat4> &globalTransforms,
-        const glm::mat4& viewProjMatrix) 
+        const glm::mat4& viewProjMatrix)
     {
         if (skin.joints.size() <= 0) return;
 
@@ -202,13 +202,13 @@ struct Skeleton {
             int nodeIndex = skin.joints[j];
             const tinygltf::Node &node = model.nodes[nodeIndex];
 			if (node.translation.size() >= 0) {
-                glm::vec3 jointPosition = 
+                glm::vec3 jointPosition =
                     glm::vec3(globalTransforms[nodeIndex][3]);
 				renderSphere(jointPosition, 2.0f, viewProjMatrix);
 
 				for (const int childIndex : node.children) {
 					const auto& childNode = model.nodes[childIndex];
-					glm::vec3 childPosition = 
+					glm::vec3 childPosition =
                         glm::vec3(globalTransforms[childIndex][3]);
 					renderLine(jointPosition, childPosition, viewProjMatrix);
 				}
@@ -231,13 +231,13 @@ struct MyBot {
 		int sampler;
 		std::string targetPath;
 		int targetNode;
-	}; 
+	};
 	struct AnimationObject {
 		std::vector<SamplerObject> samplers;
 	};
 	std::vector<AnimationObject> animationObjects;
 
-	// The skeleton class for rendering the skeleton given the transforms 
+	// The skeleton class for rendering the skeleton given the transforms
 	// obtained from the animation object
     Skeleton skeleton;
 
@@ -247,7 +247,7 @@ struct MyBot {
 
 	// Parse the transformation data at a node and turn into a 4x4 matrix
 	glm::mat4 getNodeTransform(const tinygltf::Node& node) {
-		glm::mat4 transform(1.0f); 
+		glm::mat4 transform(1.0f);
 
 		if (node.matrix.size() == 16) {
 			transform = glm::make_mat4(node.matrix.data());
@@ -280,9 +280,9 @@ struct MyBot {
 	}
 
 //TO:
-	void computeGlobalNodeTransform(const tinygltf::Model& model, 
+	void computeGlobalNodeTransform(const tinygltf::Model& model,
 		const std::vector<glm::mat4> &localTransforms,
-		int nodeIndex, const glm::mat4& parentTransform, 
+		int nodeIndex, const glm::mat4& parentTransform,
 		std::vector<glm::mat4> &globalTransforms)
 	{
 		glm::mat4 localTransform = localTransforms[nodeIndex];
@@ -296,7 +296,7 @@ struct MyBot {
 		}
 	}
 
-	int findKeyframeIndex(const std::vector<float>& times, float animationTime) 
+	int findKeyframeIndex(const std::vector<float>& times, float animationTime)
 	{
 		int left = 0;
 		int right = times.size() - 1;
@@ -319,12 +319,12 @@ struct MyBot {
 		return times.size() - 2;
 	}
 
-	std::vector<AnimationObject> prepareAnimation(const tinygltf::Model &model) 
+	std::vector<AnimationObject> prepareAnimation(const tinygltf::Model &model)
 	{
 		std::vector<AnimationObject> animationObjects;
 		for (const auto &anim : model.animations) {
 			AnimationObject animationObject;
-			
+
 			for (const auto &sampler : anim.samplers) {
 				SamplerObject samplerObject;
 
@@ -340,13 +340,13 @@ struct MyBot {
 
 				const unsigned char *inputPtr = &inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset];
 				const float *inputBuf = reinterpret_cast<const float*>(inputPtr);
-				
+
 				// Read input (time) values
 				int stride = inputAccessor.ByteStride(inputBufferView);
 				for (size_t i = 0; i < inputAccessor.count; ++i) {
 					samplerObject.input[i] = *reinterpret_cast<const float*>(inputPtr + i * stride);
 				}
-				
+
 				const tinygltf::Accessor &outputAccessor = model.accessors[sampler.output];
 				const tinygltf::BufferView &outputBufferView = model.bufferViews[outputAccessor.bufferView];
 				const tinygltf::Buffer &outputBuffer = model.buffers[outputBufferView.buffer];
@@ -357,10 +357,10 @@ struct MyBot {
 				const float *outputBuf = reinterpret_cast<const float*>(outputPtr);
 
 				int outputStride = outputAccessor.ByteStride(outputBufferView);
-				
+
 				// Output values
 				samplerObject.output.resize(outputAccessor.count);
-				
+
 				for (size_t i = 0; i < outputAccessor.count; ++i) {
 
 					if (outputAccessor.type == TINYGLTF_TYPE_VEC3) {
@@ -373,7 +373,7 @@ struct MyBot {
 
 				}
 
-				animationObject.samplers.push_back(samplerObject);			
+				animationObject.samplers.push_back(samplerObject);
 			}
 
 			animationObjects.push_back(animationObject);
@@ -489,7 +489,7 @@ struct MyBot {
 			return;
 		}
 
-		// Prepare animation data 
+		// Prepare animation data
 		animationObjects = prepareAnimation(model);
 
 		// Just take the first skin/skeleton model
@@ -504,7 +504,7 @@ struct MyBot {
         glm::mat4 parentTransform(1.0f);
         std::vector<glm::mat4> globalNodeTransforms(skin.joints.size());
         computeGlobalNodeTransform(model, localNodeTransforms, rootNodeIndex, parentTransform, globalNodeTransforms);
-        
+
         globalTransforms = globalNodeTransforms;
         skeleton.initialize();
 	}
@@ -513,141 +513,118 @@ struct MyBot {
 
         const tinygltf::Skin &skin = model.skins[0];
         skeleton.renderSkeleton(model, skin, globalTransforms, cameraMatrix);
-        
+
 	}
 
 	void cleanup() {
 
 	}
-}; 
+};
+//
+// int mainForSkeleton(void)
+// {
+// 	// Initialise GLFW
+// 	if (!glfwInit())
+// 	{
+// 		std::cerr << "Failed to initialize GLFW." << std::endl;
+// 		return -1;
+// 	}
+//
+// 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+// 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+// 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For MacOS
+// 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//
+// 	// Open a window and create its OpenGL context
+// 	window = glfwCreateWindow(windowWidth, windowHeight, "Lab 4", NULL, NULL);
+// 	if (window == NULL)
+// 	{
+// 		std::cerr << "Failed to open a GLFW window." << std::endl;
+// 		glfwTerminate();
+// 		return -1;
+// 	}
+// 	glfwMakeContextCurrent(window);
+//
+// 	// Ensure we can capture the escape key being pressed below
+// 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+// 	glfwSetKeyCallback(window, key_callback);
+//
+// 	// Load OpenGL functions, gladLoadGL returns the loaded version, 0 on error.
+// 	int version = gladLoadGL(glfwGetProcAddress);
+// 	if (version == 0)
+// 	{
+// 		std::cerr << "Failed to initialize OpenGL context." << std::endl;
+// 		return -1;
+// 	}
+//
+// 	// Background
+// 	glClearColor(0.2f, 0.2f, 0.25f, 0.0f);
+//
+// 	glEnable(GL_DEPTH_TEST);
+// 	glEnable(GL_CULL_FACE);
+//
+// 	// Our 3D character
+// 	MyBot bot;
+// 	bot.initialize();
+//
+// 	// Camera setup
+//     glm::mat4 viewMatrix, projectionMatrix;
+// 	projectionMatrix = glm::perspective(glm::radians(FoV), (float)windowWidth / windowHeight, zNear, zFar);
+//
+// 	// Time and frame rate tracking
+// 	static double lastTime = glfwGetTime();
+// 	float time = 0.0f;			// Animation time
+// 	float fTime = 0.0f;			// Time for measuring fps
+// 	unsigned long frames = 0;
+//
+// 	// Main loop
+// 	do
+// 	{
+// 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+// 		// Update states for animation
+//         double currentTime = glfwGetTime();
+//         float deltaTime = float(currentTime - lastTime);
+// 		lastTime = currentTime;
+//
+// 		if (playAnimation) {
+// 			time += deltaTime * playbackSpeed;
+// 			bot.update(time);
+// 		}
+//
+// 		// Rendering
+// 		viewMatrix = glm::lookAt(eye_center, lookat, up);
+// 		glm::mat4 vp = projectionMatrix * viewMatrix;
+// 		bot.render(vp);
+//
+// 		// FPS tracking
+// 		// Count number of frames over a few seconds and take average
+// 		frames++;
+// 		fTime += deltaTime;
+// 		if (fTime > 2.0f) {
+// 			float fps = frames / fTime;
+// 			frames = 0;
+// 			fTime = 0;
+//
+// 			std::stringstream stream;
+// 			stream << std::fixed << std::setprecision(2) << "Lab 4 | Frames per second (FPS): " << fps;
+// 			glfwSetWindowTitle(window, stream.str().c_str());
+// 		}
+//
+// 		// Swap buffers
+// 		glfwSwapBuffers(window);
+// 		glfwPollEvents();
+//
+// 	} // Check if the ESC key was pressed or the window was closed
+// 	while (!glfwWindowShouldClose(window));
+//
+// 	// Clean up
+// 	bot.cleanup();
+//
+// 	// Close OpenGL window and terminate GLFW
+// 	glfwTerminate();
+//
+// 	return 0;
+// }
 
-int mainForSkeleton(void)
-{
-	// Initialise GLFW
-	if (!glfwInit())
-	{
-		std::cerr << "Failed to initialize GLFW." << std::endl;
-		return -1;
-	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For MacOS
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(windowWidth, windowHeight, "Lab 4", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cerr << "Failed to open a GLFW window." << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-
-	// Ensure we can capture the escape key being pressed below
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-	glfwSetKeyCallback(window, key_callback);
-
-	// Load OpenGL functions, gladLoadGL returns the loaded version, 0 on error.
-	int version = gladLoadGL(glfwGetProcAddress);
-	if (version == 0)
-	{
-		std::cerr << "Failed to initialize OpenGL context." << std::endl;
-		return -1;
-	}
-
-	// Background
-	glClearColor(0.2f, 0.2f, 0.25f, 0.0f);
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-
-	// Our 3D character
-	MyBot bot;
-	bot.initialize();
-
-	// Camera setup
-    glm::mat4 viewMatrix, projectionMatrix;
-	projectionMatrix = glm::perspective(glm::radians(FoV), (float)windowWidth / windowHeight, zNear, zFar);
-
-	// Time and frame rate tracking
-	static double lastTime = glfwGetTime();
-	float time = 0.0f;			// Animation time 
-	float fTime = 0.0f;			// Time for measuring fps
-	unsigned long frames = 0;
-
-	// Main loop
-	do
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Update states for animation
-        double currentTime = glfwGetTime();
-        float deltaTime = float(currentTime - lastTime);
-		lastTime = currentTime;
-
-		if (playAnimation) {
-			time += deltaTime * playbackSpeed;
-			bot.update(time);
-		}
-
-		// Rendering
-		viewMatrix = glm::lookAt(eye_center, lookat, up);
-		glm::mat4 vp = projectionMatrix * viewMatrix;
-		bot.render(vp);
-
-		// FPS tracking 
-		// Count number of frames over a few seconds and take average
-		frames++;
-		fTime += deltaTime;
-		if (fTime > 2.0f) {		
-			float fps = frames / fTime;
-			frames = 0;
-			fTime = 0;
-			
-			std::stringstream stream;
-			stream << std::fixed << std::setprecision(2) << "Lab 4 | Frames per second (FPS): " << fps;
-			glfwSetWindowTitle(window, stream.str().c_str());
-		}
-
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while (!glfwWindowShouldClose(window));
-
-	// Clean up
-	bot.cleanup();
-
-	// Close OpenGL window and terminate GLFW
-	glfwTerminate();
-
-	return 0;
-}
-
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-	{
-		playbackSpeed += 1.0f;
-		if (playbackSpeed > 10.0f) 
-			playbackSpeed = 10.0f;
-	}
-
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-	{
-		playbackSpeed -= 1.0f;
-		if (playbackSpeed < 1.0f) {
-			playbackSpeed = 1.0f;
-		}
-	}
-
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-		playAnimation = !playAnimation;
-	}
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-}
