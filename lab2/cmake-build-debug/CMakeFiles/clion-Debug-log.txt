@@ -1,1 +1,0 @@
-CMakeLists.txt not found in C:\Users\petam\Desktop\trinity4\Computer Graphics\The Final Project\lab2 Select CMakeLists.txt
