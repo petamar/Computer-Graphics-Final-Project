@@ -17,13 +17,13 @@ include_directories(
 	lab2/
 )
 
-add_executable(lab2_building
+add_executable(Final_Project
 	lab2/Final_Project.cpp
 	lab2/render/shader.cpp
 		lab2/lab4_skeleton.cpp
 )
 
-target_link_libraries(lab2_building
+target_link_libraries(Final_Project
 	${OPENGL_LIBRARY}
 	glfw
 	glad
