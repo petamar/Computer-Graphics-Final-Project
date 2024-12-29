@@ -626,5 +626,3 @@ struct MyBot {
 //
 // 	return 0;
 // }
-
-

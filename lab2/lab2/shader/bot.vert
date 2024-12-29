@@ -17,6 +17,8 @@ uniform mat4 MVP;
 uniform mat4 u_jointMatrix[25];
 uniform mat4 model;
 
+//out vec3 color;
+
 void main() {
     vec4 normalizedWeights = vertexWeight / dot(vertexWeight, vec4(1.0));
 
@@ -35,5 +37,8 @@ void main() {
 
     worldPosition = vec3(skinMatrix * vec4(vertexPosition, 1.0));
     worldNormal = normalize(mat3(inverse(skinMatrix)) * vertexNormal);
+    vec3 blueColor = vec3(0.0, 0.0, 1.0);
+
+    //color = blueColor;
 
 }

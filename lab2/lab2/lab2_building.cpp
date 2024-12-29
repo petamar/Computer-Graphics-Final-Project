@@ -44,8 +44,8 @@ float sensitivity = 0.1f; // Mouse sensitivity
 const glm::vec3 wave500(0.0f, 255.0f, 146.0f);
 const glm::vec3 wave600(255.0f, 190.0f, 0.0f);
 const glm::vec3 wave700(205.0f, 0.0f, 0.0f);
-static glm::vec3 lightIntensity = 5.0f * (8.0f * wave500 + 15.6f * wave600 + 18.4f * wave700);
-static glm::vec3 lightPosition(0.0f, 200.0f, 0.0f);
+static glm::vec3 lightIntensity = 10.0f * (8.0f * wave500 + 15.6f * wave600 + 18.4f * wave700);
+static glm::vec3 lightPosition(0.0f, 200.0f, 200.0f);
 static float exposure = 50.0f;
 
 // Shadow mapping
@@ -2332,7 +2332,7 @@ struct Spire {
     GLuint lightIntensityID;
     GLuint exposureID;
     GLuint textureSamplerID;
-    GLuint programID;
+    GLuint programLightID;
     GLuint lightSpaceMatrixID;
     GLuint normalBufferID;
 
@@ -2394,25 +2394,25 @@ struct Spire {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Create and compile our GLSL program from the shaders
-        programID = LoadShadersFromFile("../lab2/box.vert", "../lab2/box.frag");
-        if (programID == 0) {
+        programLightID = LoadShadersFromFile("../lab2/box.vert", "../lab2/box.frag");
+        if (programLightID == 0) {
             std::cerr << "Failed to load shaders." << std::endl;
         }
 
         // Get a handle for our "MVP" uniform
-        mvpMatrixID = glGetUniformLocation(programID, "MVP");
+        mvpMatrixID = glGetUniformLocation(programLightID, "MVP");
 
         //textureID = LoadTextureTileBox("../lab2/textures/grey.png");
 
 
         // Set up the shader and get the texture sampler uniform
         //textureSamplerID = glGetUniformLocation(programID, "textureSampler");
-        lightMatrixID = glGetUniformLocation(programID, "LightMVP");
+        lightMatrixID = glGetUniformLocation(programLightID, "LightMVP");
         textureID = LoadTextureTileBox("../lab2/textures/grey.png");
-        lightPositionID = glGetUniformLocation(programID, "lightPosition");
-        lightIntensityID = glGetUniformLocation(programID, "lightIntensity");
-        exposureID = glGetUniformLocation(programID, "exposure");
-        depthMapID = glGetUniformLocation(programID, "depthMap");
+        lightPositionID = glGetUniformLocation(programLightID, "lightPosition");
+        lightIntensityID = glGetUniformLocation(programLightID, "lightIntensity");
+        exposureID = glGetUniformLocation(programLightID, "exposure");
+        depthMapID = glGetUniformLocation(programLightID, "depthMap");
     }
 
     void render(glm::mat4 cameraMatrix) {
@@ -2420,7 +2420,7 @@ struct Spire {
 
         glDisable(GL_CULL_FACE);
 
-        glUseProgram(programID);
+        glUseProgram(programLightID);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
@@ -2474,7 +2474,7 @@ struct Spire {
 
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(programID);
+        glUseProgram(programLightID);
 
         glUniform1i(depthMapID, 0);
 
@@ -2547,7 +2547,7 @@ struct Spire {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, depthMap);
 
-        glUseProgram(programID);
+        glUseProgram(programLightID);
 
         glUniform1i(depthMapID, 0);
 
@@ -2598,7 +2598,7 @@ struct Spire {
         glDeleteBuffers(1, &indexBufferID);
         glDeleteBuffers(1, &normalBufferID);
         glDeleteVertexArrays(1, &vertexArrayID);
-        glDeleteProgram(programID);
+        glDeleteProgram(programLightID);
         glDeleteFramebuffers(1, &depthMapFBO);
         glDeleteTextures(1, &depthMap);
         glDeleteTextures(1, &depthMap);
@@ -3505,4 +3505,3 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
-
